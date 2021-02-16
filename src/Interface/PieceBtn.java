@@ -16,13 +16,11 @@ public class PieceBtn extends JButton {
     public static PieceBtn pieceArriver;
 
     private Piece piece;
-    private PieceID pieceID;
     private final Coord coord;
 
     public PieceBtn(Coord coord) {
         super();
         this.piece = new Piece(false, Couleur.VIDE);
-        this.pieceID = PieceID.VIDE;
         this.coord = coord;
 
     }
@@ -35,17 +33,12 @@ public class PieceBtn extends JButton {
         this.piece = piece;
     }
 
-    public PieceID getPieceID() {
-        return pieceID;
-    }
+
 
     public Coord getCoord() {
         return coord;
     }
 
-    public void setPieceID(PieceID pieceID) {
-        this.pieceID = pieceID;
-    }
 
     /** va s'occuper de savoir le click correspond a quoi */
     public static void coupJouer(){
@@ -63,7 +56,7 @@ public class PieceBtn extends JButton {
     /** mais la pièce a la case a affecter */
     private void setPieceEgaleA(PieceBtn caseAffecter, Icon etatLaisser){
         caseAffecter.setIcon(getIcon());
-        caseAffecter.setPieceID(DicoPieceIcon.getIDFromIcon(getIcon()));
+        caseAffecter.getPiece().setPieceID(DicoPieceIcon.getIDFromIcon(getIcon()));
         caseAffecter.piece = this.piece;
         this.setPieceBtn(PieceID.VIDE, etatLaisser);
     }
@@ -71,7 +64,6 @@ public class PieceBtn extends JButton {
     /** mais la piece égale a son PieceID et son icon*/
     public void setPieceBtn(PieceID pieceID, Icon defaultIcon){
         this.piece = DicoPieceIcon.transformerIDenPiece(pieceID);
-        this.pieceID = pieceID;
         setIcon(defaultIcon);
     }
     @Override
@@ -79,9 +71,9 @@ public class PieceBtn extends JButton {
         super.setIcon(defaultIcon);
     }
 
-    /**  renvoie si les pieces sont de même couleur ou non */
+    /**  renvoie si les pieces peuvent s'accéder ou non  */
     public boolean isPlaceAcessible(PieceBtn pieceViser){
-        return (!(this.piece.getCouleur() == pieceViser.piece.getCouleur()));
+        return (this.piece.getCouleur() != pieceViser.piece.getCouleur());
     }
 
     /** renvoie si la piece en argument est mangeable par celle appelé */

@@ -8,7 +8,7 @@ import Move.Coord;
 
 public class Roi extends Piece {
    
-    private boolean jamaisRoque = true;
+    private boolean jamaisJouer = true;
 
     public static final short[][] VECTEUR_ROI = { {1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
 
@@ -18,12 +18,12 @@ public class Roi extends Piece {
         else super.pieceID = PieceID.ROI_BLANC;
     }
 
-    public boolean getJamaisRoque(){
-        return this.jamaisRoque;
+    public boolean getJamaisJouer(){
+        return this.jamaisJouer;
     }
 
     public void setRoqueJouer(){
-        this.jamaisRoque = false;
+        this.jamaisJouer = false;
     }
 
     @Override
@@ -39,7 +39,10 @@ public class Roi extends Piece {
             if (Window.isDansPlateau(ligne, colonne) ){
                 //si est dans le plateau et pas de la même couleur alors le coup est possible
                 if (plateau.getPiece(to.ligne, to.colonne).isPlaceAcessible(plateau.getPiece(ligne, colonne))){
-                    if (from.ligne == ligne && from.colonne == colonne) return true;
+                    if (from.ligne == ligne && from.colonne == colonne) {
+                        jamaisJouer = false;
+                        return true;
+                    }
                 }
             }
         }

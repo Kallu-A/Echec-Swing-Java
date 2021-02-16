@@ -10,7 +10,7 @@ import Move.Coord;
 public class Tour extends Piece {
 
     public static final short[][] VECTEUR_TOUR = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
-    
+
     public Tour(Couleur couleur){
         super(true, couleur);
         if (couleur == Couleur.NOIR) super.pieceID = PieceID.TOUR_NOIR;
@@ -39,6 +39,7 @@ public class Tour extends Piece {
                         //test si la piece est mangeable et math avec l'arriver 
                         if (plateau.getPiece(to.ligne, to.colonne).isMangeable( plateau.getPiece(from.ligne, from.colonne) )
                         && from.ligne == ligne && from.colonne == colonne) return true;
+
                         //Si pas mangeable ou match pas on break le vecteur la 
                         break;
                     }
