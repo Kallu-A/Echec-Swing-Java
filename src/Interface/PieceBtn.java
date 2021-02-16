@@ -54,7 +54,7 @@ public class PieceBtn extends JButton {
     }
 
     /** mais la pièce a la case a affecter */
-    private void setPieceEgaleA(PieceBtn caseAffecter, Icon etatLaisser){
+    public void setPieceEgaleA(PieceBtn caseAffecter, Icon etatLaisser){
         caseAffecter.setIcon(getIcon());
         caseAffecter.getPiece().setPieceID(DicoPieceIcon.getIDFromIcon(getIcon()));
         caseAffecter.piece = this.piece;

@@ -112,12 +112,13 @@ public class Window extends JFrame {
                             PieceBtn.pieceArriver = (PieceBtn) e.getSource();
                             if (PieceBtn.pieceDepart.getPiece().coupPossible(window,
                                     new Move(PieceBtn.pieceDepart.getCoord(), PieceBtn.pieceArriver.getCoord()))) {
-                                //permet de mettre a jouer si c'est un pion
+
                                 if (isEchec(PieceBtn.pieceDepart.getPiece().getCouleur(),
                                         new Move(PieceBtn.pieceDepart.getCoord(), PieceBtn.pieceArriver.getCoord() ) ) ){
                                     affichageInfo.setText("Votre coup vous met en échec");
                                     return;
                                 }
+                                //permet de mettre a jouer si c'est un pion
                                 if (PieceBtn.pieceDepart.getPiece().getPieceID() == PieceID.PION_NOIR ||
                                         PieceBtn.pieceDepart.getPiece().getPieceID() == PieceID.PION_BLANC)  ((Pion) PieceBtn.pieceDepart.getPiece()).setJouer();
                                 PieceBtn.pieceDepart.setMouvement(PieceBtn.pieceArriver, imageIcon.VIDE_ICON);
@@ -260,32 +261,27 @@ public class Window extends JFrame {
 
     /** récupere la position d'un roi d'une couleur */
     protected Coord getRoiInfo(Couleur couleur){
-        boolean trouver = false;
-        Coord roi = new Coord((short) -1, (short) -1); //evite le warning pas initialiser
         //parcours le plateau pour chercher le roi de la couleur
         for (short ligne=0; ligne<DIMENSION_BOARD; ligne++ ){
             for (short  colonne=0; colonne<DIMENSION_BOARD; colonne++){
                 if (this.getPiece(ligne, colonne).getPiece() instanceof Roi &&
-                        this.getPiece(ligne, colonne).getPiece().getCouleur() == couleur) {
-                    roi = new Coord(ligne, colonne);
-                    trouver = true;
-                    break;
+                        this.getPiece(ligne, colonne).getPiece().getCouleur().equals(couleur) ) {
+                    return  new Coord(ligne, colonne);
                 }
             }
         }
         //si pas trouver pas de roi donc quitter
-        if (!trouver) {
-            System.out.println("Erreur : il manque un roi");
-            return null;
-        }
-        return roi;
-
+        System.out.println("Erreur : il manque un roi");
+        return null;
     }
 
     /** renvoie si le roi d'une couleur est en echec ou non */
     private boolean isEchecTest(Couleur couleur){
         Coord roi = getRoiInfo(couleur);
-        if (roi == null) {affichageInfo.setText("Erreur : plus de roi"); return false;}
+        if (roi == null) {
+            System.out.println("roi pas trouver");
+            return false;
+        }
         if (estMenacer(roi)) return true;
         return false;
     }
@@ -298,10 +294,12 @@ public class Window extends JFrame {
         for (short ligne=0; ligne<DIMENSION_BOARD; ligne++ ){
             for (short  colonne=0; colonne<DIMENSION_BOARD; colonne++){
                 pieceTempo = getPiece(ligne, colonne);
-                //si la piece ne peut pas  manger  la piece menacer alors on break
-                if (pieceTempo.getPiece().getCouleur() != pieceMenacer.getCouleur()) {
-                    if ( pieceTempo.getPiece().coupPossible(this, new Move(pieceTempo.getCoord(), piece ) ) ) {
-                        return true;
+                if ( !pieceTempo.getPiece().getPieceID().equals(PieceID.VIDE)){
+                    //si la piece ne peut pas  manger  la piece menacer alors on break
+                    if (!pieceTempo.getPiece().getCouleur().equals(pieceMenacer.getCouleur())) {
+                        if ( pieceTempo.getPiece().coupPossible(this, new Move(pieceTempo.getCoord(), piece ) ) ) {
+                            return true;
+                        }
                     }
                 }
                 //test si la pieceMenacer est dans les coups possibles de piece tempo
@@ -313,14 +311,14 @@ public class Window extends JFrame {
     /** fait un faux deplacement*/
     protected Piece setFakeDeplacement(Move deplacement){
         Piece tampon = getPiece(deplacement.to.ligne, deplacement.to.colonne).getPiece();
-        getPiece(deplacement.to.ligne, deplacement.to.colonne).setPiece(getPiece(deplacement.from.ligne, deplacement.from.colonne).getPiece());
-        getPiece(deplacement.from.ligne, deplacement.from.colonne).setPiece(new Piece(false, Couleur.VIDE));
+        getPiece(deplacement.to.ligne, deplacement.to.colonne).setPieceEgaleA(getPiece(deplacement.from.ligne, deplacement.from.colonne), imageIcon.VIDE_ICON);
         return tampon;
     }
     /** inverse le faux deplacement*/
     protected void setFakeDeplacementReverse(Piece piece, Move deplacement){
-        getPiece(deplacement.from.ligne, deplacement.from.colonne).setPiece(getPiece(deplacement.to.ligne, deplacement.to.colonne).getPiece());
+        getPiece(deplacement.from.ligne, deplacement.from.colonne).setPieceEgaleA(getPiece(deplacement.to.ligne, deplacement.to.colonne), imageIcon.VIDE_ICON);
         getPiece(deplacement.to.ligne, deplacement.to.colonne).setPiece(piece);
+        getPiece(deplacement.to.ligne, deplacement.to.colonne).getPiece().setPieceID(piece.getPieceID());
     }
 
     private boolean isEchec(Couleur couleur, Move deplacement){
