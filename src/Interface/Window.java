@@ -9,7 +9,6 @@ import Piece.Pion;
 
 import javax.swing.*;
 
-import javax.swing.plaf.ToolBarUI;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import java.awt.*;
@@ -36,6 +35,8 @@ public class Window extends JFrame {
 
     //permet de stocker la fenetre pour coup possible
     protected Window window;
+
+    protected int tour = 0;
 
     public Window() {
         //init windows
@@ -83,10 +84,17 @@ public class Window extends JFrame {
                         PieceBtn pieceBtn = (PieceBtn) e.getSource();
                         affichageInfo.setText( pieceBtn.getPiece().toString());
 
+
                         // vérifie si c'est le coup de départ et que c'est une piece
                         if (PieceBtn.etat == EtatCoup.PIECEDEPART) {
+                            //vérifie qu'on joue la bonne couleur
+                            if (getTourCouleur() != pieceBtn.getPiece().getCouleur()) {
+                                traitAffichage();
+                                return;
+                            }
                             if ( pieceBtn.getPiece().isUnePiece() )
                                     PieceBtn.pieceDepart = pieceBtn;
+
                             else {
                                 affichageInfo.setText("Vous devez selectioner une pièce");
                                 return;
@@ -96,7 +104,7 @@ public class Window extends JFrame {
                             //On doit récuperer le coup arriver
                             //test pas de la même couleur
                             if ( PieceBtn.pieceDepart.getPiece().getCouleur() == pieceBtn.getPiece().getCouleur()) {
-                                affichageInfo.setText("Vous ne pouvez pas manger la même couleur");
+                                traitAffichage();
                                 return;
                             }
                             PieceBtn.pieceArriver = (PieceBtn) e.getSource();
@@ -106,6 +114,8 @@ public class Window extends JFrame {
                                 if (PieceBtn.pieceDepart.getPiece().getPieceID() == PieceID.PION_NOIR ||
                                         PieceBtn.pieceDepart.getPiece().getPieceID() == PieceID.PION_BLANC)  ((Pion) PieceBtn.pieceDepart.getPiece()).setJouer();
                                 PieceBtn.pieceDepart.setMouvement(PieceBtn.pieceArriver, imageIcon.VIDE_ICON);
+                                tourIncrementer();
+                                traitAffichage();
                             }
                             else affichageInfo.setText("Coup impossible");
                         }
@@ -182,7 +192,8 @@ public class Window extends JFrame {
                 int input = JOptionPane.showConfirmDialog(window, "Etes vous sur ?");
                 if (input == 0 ) {
                     setPieceBtn();
-                    affichageInfo.setText("Au joueur blanc de commencer");
+                    tour = 0;
+                    traitAffichage();
                 }
             }
         });
@@ -220,6 +231,26 @@ public class Window extends JFrame {
     /** renvoie si la piece en argument est vide ou non  */
     public static boolean isPlaceLibre(PieceBtn pieceViser){
         return ( pieceViser.getPiece().getCouleur() == Couleur.VIDE);
+    }
+
+    /** affiche le trait*/
+    protected void traitAffichage(){
+        if (getTourCouleur() == Couleur.BLANC ) affichageInfo.setText("trait au blanc");
+        else affichageInfo.setText("trait au noir");
+    }
+
+    protected Couleur getTourCouleur(){
+        if (tour%2 == 0) return Couleur.BLANC;
+        else return Couleur.NOIR;
+    }
+
+    /** incremente le tour*/
+    protected void tourIncrementer(){
+        this.tour++;
+    }
+
+    protected int getTour(){
+        return this.tour;
     }
 
 }

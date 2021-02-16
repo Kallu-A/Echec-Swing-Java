@@ -17,7 +17,7 @@ public class PieceBtn extends JButton {
 
     private Piece piece;
     private PieceID pieceID;
-    private Coord coord;
+    private final Coord coord;
 
     public PieceBtn(Coord coord) {
         super();

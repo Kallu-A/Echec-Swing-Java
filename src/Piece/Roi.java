@@ -1,8 +1,8 @@
 package Piece;
 
 import Interface.Image.PieceID;
-import Interface.PieceBtn;
 import Interface.Window;
+
 import Move.Move;
 import Move.Coord;
 

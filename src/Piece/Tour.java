@@ -2,8 +2,8 @@ package Piece;
 
 
 import Interface.Image.PieceID;
-import Interface.PieceBtn;
 import Interface.Window;
+
 import Move.Move;
 import Move.Coord;
 
@@ -19,12 +19,11 @@ public class Tour extends Piece {
 
     @Override
     public boolean coupPossible(Window plateau, Move move){
-        short[][] toutVecteur = VECTEUR_TOUR;
         short ligne, colonne ,i;
         Coord to = move.to;
         Coord from = move.from;
         //test des vecteurs
-        for (short[]  vecteur : toutVecteur) {
+        for (short[]  vecteur : VECTEUR_TOUR) {
             i=1;
             while (true){
                 //postion de la tour avec le vecteur

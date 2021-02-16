@@ -4,5 +4,5 @@ package Piece;
 public enum Couleur {
     BLANC,
     VIDE,
-    NOIR;
+    NOIR
 }
