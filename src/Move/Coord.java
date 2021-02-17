@@ -10,6 +10,7 @@ public class Coord {
         this.colonne=colonne;
     }
 
+    @Override
     public String toString(){
         return "Coord avec ligne ="+this.ligne + " colonne ="+this.colonne;
     }

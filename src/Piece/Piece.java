@@ -47,5 +47,11 @@ public class Piece {
     public String toString() {
         return "Case sélectionnée:" + pieceID;
     }
+
+    public static Couleur getCouleurInverse(Couleur couleur){
+        if ( couleur == Couleur.VIDE) return couleur;
+        if (couleur == Couleur.NOIR) return Couleur.BLANC;
+        else return Couleur.NOIR;
+    }
 }
 

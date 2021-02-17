@@ -8,6 +8,7 @@ import Piece.Couleur;
 import Piece.Piece;
 import Piece.Pion;
 import Piece.Roi;
+import Piece.Tour;
 import javax.swing.*;
 
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
@@ -19,15 +20,13 @@ public class Window extends JFrame {
 
     public static int DIMENSION_BOARD = 8;
 
-    private JPanel contentPane;
+    private final JPanel contentPane;
     private JPanel boardPanel;
-    private JToolBar toolBar;
     private PieceBtn[][] boardBtn;
-    private PieceImageIcon imageIcon;
+    private final PieceImageIcon imageIcon;
     private JLabel affichageInfo;
-    private JButton relancerPartie;
     //permet de stocker la fenetre pour coupPossible
-    private Window window;
+    private final Window window;
 
     private int tour = 0;
 
@@ -87,8 +86,25 @@ public class Window extends JFrame {
                         //On doit récuperer le coup arriver
                         //test pas de la même couleur
                         if ( PieceBtn.pieceDepart.getPiece().getCouleur() == pieceBtn.getPiece().getCouleur()) {
-                            traitAffichage();
-                            return;
+
+                            //on test que les cases sélectionnées sont bien Roi et tour qui sont les conditions du roque
+                            if (!(PieceBtn.pieceDepart.getPiece() instanceof Roi || pieceBtn.getPiece() instanceof Tour) ) {
+                                PieceBtn.pieceDepart = pieceBtn;
+                                return;
+                            }
+                            if (isRoquePossible(PieceBtn.pieceDepart.getPiece().getCouleur(),
+                                    new Move(PieceBtn.pieceDepart.getCoord(), pieceBtn.getCoord()) )){
+                                tourIncrementer();
+                                PieceBtn.pieceArriver = pieceBtn;
+                                PieceBtn.coupJouer();
+                                traitAffichage();
+                                return;
+                            }
+                            else {
+                                PieceBtn.coupJouer();
+                                return;
+                            }
+
                         }
                         //si condition sont rempli on recupère la pièce d'arriver
                         PieceBtn.pieceArriver = (PieceBtn) e.getSource();
@@ -166,11 +182,11 @@ public class Window extends JFrame {
 
     /** créer la toolBar*/
     private void createToolBar(){
-        toolBar = new JToolBar();
+        JToolBar toolBar = new JToolBar();
         Font f = new Font("Fira sans", Font.PLAIN, 23);
         toolBar.setLayout( new FlowLayout());
         affichageInfo = new JLabel("Au joueur blanc de commencer");
-        relancerPartie = new JButton("<html> <body> <font color='9999FF'>" +
+        JButton relancerPartie = new JButton("<html> <body> <font color='9999FF'>" +
                 "Relancer une partie" +
                 "</body> </html>");
 
@@ -259,13 +275,18 @@ public class Window extends JFrame {
             System.out.println("roi pas trouver");
             return false;
         }
-        return estMenacer(roi);
+        return isMenacer(roi, Couleur.VIDE);
     }
 
     /**regarde si la piece est menacer par une des piece adverse */
-    protected boolean estMenacer(Coord piece){
+    protected boolean isMenacer(Coord piece, Couleur couleurMenacante){
+        //couleurMenacante = Vide correspond a l'echec normale sinon c'est pour le roque
         PieceBtn pieceTempo;
         Piece pieceMenacer = getPieceBtn(piece.ligne, piece.colonne).getPiece();
+        Couleur couleurPieceMenacer;
+
+        if (couleurMenacante == Couleur.VIDE) couleurPieceMenacer = pieceMenacer.getCouleur();
+        else couleurPieceMenacer = couleurMenacante;
 
         for (short ligne=0; ligne<DIMENSION_BOARD; ligne++ ){
             for (short  colonne=0; colonne<DIMENSION_BOARD; colonne++){
@@ -273,7 +294,7 @@ public class Window extends JFrame {
                 if ( !pieceTempo.getPiece().getPieceID().equals(PieceID.VIDE)){
                     //si la piece ne peut pas  manger  la piece menacer alors on break
                     //test si la pieceMenacer est dans les coups possibles de piece tempo
-                    if (!pieceTempo.getPiece().getCouleur().equals(pieceMenacer.getCouleur())) {
+                    if (!pieceTempo.getPiece().getCouleur().equals(couleurPieceMenacer)) {
                         if ( pieceTempo.getPiece().coupPossible(this, new Move(pieceTempo.getCoord(), piece ) ) ) {
                             return true;
                         }
@@ -321,5 +342,58 @@ public class Window extends JFrame {
         }
     }
 
+    /** test le roque est possible */
+    private boolean isRoquePossible(Couleur couleurMenacante, Move deplacementRoque){
+        int roque;
+        // récupère si un grand roque ou un petit si pas un roque renvoie faux
+        roque = Move.isPetitGrandRoque(deplacementRoque);
+        if (roque == -1) {
+            affichageInfo.setText("Vous ne pouvez pas roque");
+            return false;
+        }
+        // -1 pas un roque 0 petit roque 1 grand roque
+        short ligne = deplacementRoque.to.ligne;
+        if (roque == 1){
+            //grand roque
+            for (short c= 4; c >= 0; c-- ){
+                if ( c != 0 &&  c != 4  &&  getPieceBtn(ligne, c).getPiece().getCouleur() != Couleur.VIDE){
+                    affichageInfo.setText("Une pièce bloque le grand roque");
+                    return false;
+                }
+                if ( c> 1){
+                    if (isMenacer(new Coord(ligne, c), couleurMenacante)) {
+                        affichageInfo.setText("Impossible chemin du Roi menacé");
+                        return false;
+                    }
+                }
+            }
+            //fait le deplacement du grand roque
+            getPieceBtn(deplacementRoque.to.ligne, deplacementRoque.to.colonne).setPieceEgaleA(
+                    getPieceBtn(ligne, (short) 2), imageIcon.VIDE_ICON);
+            getPieceBtn(deplacementRoque.from.ligne, deplacementRoque.from.colonne).setPieceEgaleA(
+                    getPieceBtn(ligne, (short) 3), imageIcon.VIDE_ICON);
+            return true;
+        } else {
+           //petit roque
+            for (short c= 4; c < DIMENSION_BOARD; c++ ){
+                if ( (c != 4 &&  c != 7)  &&  getPieceBtn(ligne, c).getPiece().getCouleur() != Couleur.VIDE){
+                    affichageInfo.setText("Une pièce bloque le grand roque");
+                    return false;
+                }
+                if ( c != 7 ){
+                    if (isMenacer(new Coord(ligne, c), couleurMenacante)) {
+                        affichageInfo.setText("Impossible chemin du Roi menacé");
+                        return false;
+                    }
+                }
+            }
+            //fait le deplacement du petit roque
+            getPieceBtn(deplacementRoque.to.ligne, deplacementRoque.to.colonne).setPieceEgaleA(
+                    getPieceBtn(ligne, (short) 6), imageIcon.VIDE_ICON);
+            getPieceBtn(deplacementRoque.from.ligne, deplacementRoque.from.colonne).setPieceEgaleA(
+                    getPieceBtn(ligne, (short) 5), imageIcon.VIDE_ICON);
+            return true;
+        }
+    }
 
 }
