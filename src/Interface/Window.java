@@ -124,6 +124,7 @@ public class Window extends JFrame {
                                 PieceBtn.pieceDepart.setMouvement(PieceBtn.pieceArriver, imageIcon.VIDE_ICON);
                                 tourIncrementer();
                                 traitAffichage();
+                                pionToReine();
                             }
                             else affichageInfo.setText("Coup impossible");
                         }
@@ -331,7 +332,19 @@ public class Window extends JFrame {
         //defait le coup
         setFakeDeplacementReverse(pieceRetirer, deplacement);
         return echec;
-
     }
+
+    /** converti les pions en reine*/
+    private void pionToReine(){
+        for (short j = 0; j<DIMENSION_BOARD; j++){
+            if (getPiece((short) 0,j).getPiece().getPieceID() == PieceID.PION_BLANC){
+                getPiece((short) 0, j).setPieceBtn(PieceID.REINE_BLANC, imageIcon.REINE_BLANC_ICON);
+            }
+            if (getPiece((short) 7,j).getPiece().getPieceID() == PieceID.PION_NOIR){
+                getPiece((short) 7, j).setPieceBtn(PieceID.REINE_NOIR, imageIcon.REINE_NOIR_ICON);
+            }
+        }
+    }
+
 
 }
