@@ -22,7 +22,6 @@ public class PieceBtn extends JButton {
         super();
         this.piece = new Piece(false, Couleur.VIDE);
         this.coord = coord;
-
     }
 
     public Piece getPiece() {
@@ -33,27 +32,24 @@ public class PieceBtn extends JButton {
         this.piece = piece;
     }
 
-
-
     public Coord getCoord() {
         return coord;
     }
 
-
-    /** va s'occuper de savoir le click correspond a quoi */
+    /** permet de savoir le click correspond a quoi */
     public static void coupJouer(){
         if (etat == EtatCoup.PIECEDEPART) etat = EtatCoup.PIECEARRIVER;
         else etat = EtatCoup.PIECEDEPART;
     }
 
-    /** fait le mouvement d'une pièce et indique si il a été fait*/
+    /** essaye de faire le mouvement d'une pièce et renvoie si il a été fait ou non*/
     public boolean setMouvement(PieceBtn caseArriver, Icon etatLaisser){
         if (pieceDepart.equals(pieceArriver)) return false;
         this.setPieceEgaleA(caseArriver, etatLaisser);
         return true;
     }
 
-    /** mais la pièce a la case a affecter */
+    /** deplacer this a caseAffecter et laisse le vide derière */
     public void setPieceEgaleA(PieceBtn caseAffecter, Icon etatLaisser){
         caseAffecter.setIcon(getIcon());
         caseAffecter.getPiece().setPieceID(DicoPieceIcon.getIDFromIcon(getIcon()));
@@ -61,26 +57,21 @@ public class PieceBtn extends JButton {
         this.setPieceBtn(PieceID.VIDE, etatLaisser);
     }
 
-    /** mais la piece égale a son PieceID et son icon*/
+    /** mais la piece égale a l'argument PieceID,  icon*/
     public void setPieceBtn(PieceID pieceID, Icon defaultIcon){
         this.piece = DicoPieceIcon.transformerIDenPiece(pieceID);
         setIcon(defaultIcon);
     }
-    @Override
-    public void setIcon(Icon defaultIcon) {
-        super.setIcon(defaultIcon);
-    }
 
-    /**  renvoie si les pieces peuvent s'accéder ou non  */
+    /**  renvoie si les pieces ne sont pas de même couleur  */
     public boolean isPlaceAcessible(PieceBtn pieceViser){
         return (this.piece.getCouleur() != pieceViser.piece.getCouleur());
     }
 
-    /** renvoie si la piece en argument est mangeable par celle appelé */
+    /** renvoie si la piece en argument est mangeable par this */
     public boolean isMangeable(PieceBtn pieceViser){
         if (this.getPiece().getCouleur() == Couleur.BLANC && pieceViser.getPiece().getCouleur() == Couleur.NOIR) return true;
-        if (this.getPiece().getCouleur() == Couleur.NOIR && pieceViser.getPiece().getCouleur() == Couleur.BLANC) return true;
-        return false;
+        return this.getPiece().getCouleur() == Couleur.NOIR && pieceViser.getPiece().getCouleur() == Couleur.BLANC;
     }
 
 

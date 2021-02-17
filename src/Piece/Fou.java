@@ -5,7 +5,7 @@ import Interface.Image.PieceID;
 import Interface.Window;
 import Move.Move;
 import Move.Coord;
-
+/** pièce le fou*/
 public class Fou extends Piece {
 
     public static final short[][] VECTEUR_FOU = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
@@ -31,13 +31,13 @@ public class Fou extends Piece {
                 colonne = (short) (to.colonne + i * vecteur[1]);
                 if (Window.isDansPlateau(ligne, colonne) ){
                     //si il n'y a pas de piece
-                    if ( Window.isPlaceLibre( plateau.getPiece(ligne, colonne) ) ){
+                    if ( Window.isPlaceLibre( plateau.getPieceBtn(ligne, colonne) ) ){
                         //les coordonées d'arriver et du chemin calculé sont égal alors c'est possible
                         if (from.ligne == ligne && from.colonne == colonne) return true;
                     } else {
                         //si la place n'est pas pas vide 
                         //test si elle est mangeable couleur opposé et coordonée du chemin correspond sinon on break
-                        if ( plateau.getPiece(to.ligne, to.colonne).isMangeable( plateau.getPiece(from.ligne, from.colonne) )
+                        if ( plateau.getPieceBtn(to.ligne, to.colonne).isMangeable( plateau.getPieceBtn(from.ligne, from.colonne) )
                         && from.ligne == ligne && from.colonne == colonne ) return true;
                         break;
                     }

@@ -4,9 +4,10 @@ import Interface.Image.PieceID;
 import Interface.Window;
 import Move.Move;
 
+/** pièce*/
 public class Piece {
 
-    private boolean unePiece;
+    private final boolean unePiece;
     private Couleur couleur;
     protected PieceID pieceID = PieceID.VIDE;
 
@@ -23,11 +24,6 @@ public class Piece {
     /** renvoie si c'est une pièce */
     public boolean isUnePiece() {
         return this.unePiece;
-    }
-
-    /** setter piece si il y a ou non */
-    public void setUnePiece(boolean unePiece) {
-        this.unePiece = unePiece;
     }
 
     public Couleur getCouleur() {

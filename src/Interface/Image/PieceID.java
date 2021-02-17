@@ -1,7 +1,6 @@
 package Interface.Image;
 
-import javax.swing.*;
-
+/** permet d'identifier les pieces dans les piecesBtn*/
 public enum PieceID {
 
     VIDE,
@@ -18,7 +17,7 @@ public enum PieceID {
     TOUR_BLANC,
     CAVALIER_BLANC,
     FOU_BLANC,
-    PION_BLANC;
+    PION_BLANC,
 
 
 }

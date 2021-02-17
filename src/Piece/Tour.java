@@ -6,7 +6,7 @@ import Interface.Window;
 
 import Move.Move;
 import Move.Coord;
-
+/** piece de la tour*/
 public class Tour extends Piece {
 
     public static final short[][] VECTEUR_TOUR = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
@@ -17,6 +17,7 @@ public class Tour extends Piece {
         else super.pieceID = PieceID.TOUR_BLANC;
     }
 
+    /** calcul des coups possibles de la tour*/
     @Override
     public boolean coupPossible(Window plateau, Move move){
         short ligne, colonne ,i;
@@ -32,12 +33,12 @@ public class Tour extends Piece {
 
                 if (Window.isDansPlateau(ligne, colonne) ){
                     //si la place est libre 
-                    if ( Window.isPlaceLibre( plateau.getPiece(ligne, colonne) ) ){
+                    if ( Window.isPlaceLibre( plateau.getPieceBtn(ligne, colonne) ) ){
                         //si coordonées correrspondent avec celle d'arriver alors coup vrai
                         if (from.ligne == ligne && from.colonne == colonne) return true;
                     } else {
                         //test si la piece est mangeable et math avec l'arriver 
-                        if (plateau.getPiece(to.ligne, to.colonne).isMangeable( plateau.getPiece(from.ligne, from.colonne) )
+                        if (plateau.getPieceBtn(to.ligne, to.colonne).isMangeable( plateau.getPieceBtn(from.ligne, from.colonne) )
                         && from.ligne == ligne && from.colonne == colonne) return true;
 
                         //Si pas mangeable ou match pas on break le vecteur la 

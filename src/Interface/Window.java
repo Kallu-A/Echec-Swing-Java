@@ -13,31 +13,23 @@ import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-
-/** interface graphique */
+/** interface graphique et jeu d'échec*/
 public class Window extends JFrame {
 
     public static int DIMENSION_BOARD = 8;
 
-    protected JPanel contentPane;
-    protected JPanel boardPanel;
+    private JPanel contentPane;
+    private JPanel boardPanel;
+    private JToolBar toolBar;
+    private PieceBtn[][] boardBtn;
+    private PieceImageIcon imageIcon;
+    private JLabel affichageInfo;
+    private JButton relancerPartie;
+    //permet de stocker la fenetre pour coupPossible
+    private Window window;
 
-    protected JToolBar toolBar;
-
-    protected PieceBtn[][] boardBtn;
-
-    protected PieceImageIcon imageIcon;
-
-    protected JLabel affichageInfo;
-    protected JButton relancerPartie;
-
-    //permet de stocker la fenetre pour coup possible
-    protected Window window;
-
-    protected int tour = 0;
+    private int tour = 0;
 
     public Window() {
         //init windows
@@ -49,87 +41,79 @@ public class Window extends JFrame {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
 
-
-        //create
         this.contentPane = (JPanel) this.getContentPane();
-
-        //set
         contentPane.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
 
-        //add
         setInitPieceBtn();
         this.setUI();
         createToolBar();
 
-        //setCouleur
         boardPanel.setBackground(new Color(102, 110,105 ));
         contentPane.setBackground(new Color(90, 90, 90));
 
         this.setVisible(true);
-
     }
 
-    /** initialise toutes les pieces btn*/
-    protected void setInitPieceBtn(){
+    /** initialise toutes les piecesBtn (appeler qu'une fois)*/
+    private void setInitPieceBtn(){
         this.boardPanel = new JPanel(new GridLayout(DIMENSION_BOARD, DIMENSION_BOARD));
         boardBtn = new PieceBtn[DIMENSION_BOARD][DIMENSION_BOARD];
         for (int i = 0; i< DIMENSION_BOARD; i++){
             for (int j = 0; j< DIMENSION_BOARD; j++){
                 boardBtn[i][j] = new PieceBtn(new Coord( (short) i, (short) j));
 
-                boardBtn[i][j].addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                //action en cas de clique
+                boardBtn[i][j].addActionListener(e -> {
 
-                        //si on dois récuperer le coup de départ
-                        PieceBtn pieceBtn = (PieceBtn) e.getSource();
-                        affichageInfo.setText( pieceBtn.getPiece().toString());
+                    //si on dois récuperer le coup de départ
+                    PieceBtn pieceBtn = (PieceBtn) e.getSource();
+                    affichageInfo.setText( pieceBtn.getPiece().toString());
 
-
-                        // vérifie si c'est le coup de départ et que c'est une piece
-                        if (PieceBtn.etat == EtatCoup.PIECEDEPART) {
-                            //vérifie qu'on joue la bonne couleur
-                            if (getTourCouleur() != pieceBtn.getPiece().getCouleur()) {
-                                traitAffichage();
-                                return;
-                            }
-                            if ( pieceBtn.getPiece().isUnePiece() )
-                                    PieceBtn.pieceDepart = pieceBtn;
-
-                            else {
-                                affichageInfo.setText("Vous devez selectioner une pièce");
-                                return;
-                            }
+                    // vérifie si c'est le coup de départ et que c'est une piece
+                    if (PieceBtn.etat == EtatCoup.PIECEDEPART) {
+                        //vérifie qu'on joue la bonne couleur
+                        if (getTourCouleur() != pieceBtn.getPiece().getCouleur()) {
+                            traitAffichage();
+                            return;
                         }
+                        if ( pieceBtn.getPiece().isUnePiece() )
+                                PieceBtn.pieceDepart = pieceBtn;
                         else {
-                            //On doit récuperer le coup arriver
-                            //test pas de la même couleur
-                            if ( PieceBtn.pieceDepart.getPiece().getCouleur() == pieceBtn.getPiece().getCouleur()) {
-
-                                traitAffichage();
+                            affichageInfo.setText("Vous devez selectioner une pièce");
+                            return;
+                        }
+                    }
+                    else {
+                        //On doit récuperer le coup arriver
+                        //test pas de la même couleur
+                        if ( PieceBtn.pieceDepart.getPiece().getCouleur() == pieceBtn.getPiece().getCouleur()) {
+                            traitAffichage();
+                            return;
+                        }
+                        //si condition sont rempli on recupère la pièce d'arriver
+                        PieceBtn.pieceArriver = (PieceBtn) e.getSource();
+                        //si la pièceArriver est dans les coups possible de celle de départ
+                        if (PieceBtn.pieceDepart.getPiece().coupPossible(window,
+                                new Move(PieceBtn.pieceDepart.getCoord(), PieceBtn.pieceArriver.getCoord()))) {
+                            //si le roi de la pièce de départ est en echec on arrête le coup
+                            if (isEchec(PieceBtn.pieceDepart.getPiece().getCouleur(),
+                                    new Move(PieceBtn.pieceDepart.getCoord(), PieceBtn.pieceArriver.getCoord() ) ) ){
+                                affichageInfo.setText("Votre coup vous met en échec");
                                 return;
                             }
-                            PieceBtn.pieceArriver = (PieceBtn) e.getSource();
-                            if (PieceBtn.pieceDepart.getPiece().coupPossible(window,
-                                    new Move(PieceBtn.pieceDepart.getCoord(), PieceBtn.pieceArriver.getCoord()))) {
-
-                                if (isEchec(PieceBtn.pieceDepart.getPiece().getCouleur(),
-                                        new Move(PieceBtn.pieceDepart.getCoord(), PieceBtn.pieceArriver.getCoord() ) ) ){
-                                    affichageInfo.setText("Votre coup vous met en échec");
-                                    return;
-                                }
-                                //permet de mettre a jouer si c'est un pion
-                                if (PieceBtn.pieceDepart.getPiece().getPieceID() == PieceID.PION_NOIR ||
-                                        PieceBtn.pieceDepart.getPiece().getPieceID() == PieceID.PION_BLANC)  ((Pion) PieceBtn.pieceDepart.getPiece()).setJouer();
-                                PieceBtn.pieceDepart.setMouvement(PieceBtn.pieceArriver, imageIcon.VIDE_ICON);
-                                tourIncrementer();
-                                traitAffichage();
-                                pionToReine();
-                            }
-                            else affichageInfo.setText("Coup impossible");
+                            //coup entièrement valide
+                            //permet de mettre a jouer si c'est un pion pour gérer le déplacement de 2
+                            if (PieceBtn.pieceDepart.getPiece().getPieceID() == PieceID.PION_NOIR ||
+                                    PieceBtn.pieceDepart.getPiece().getPieceID() == PieceID.PION_BLANC)  ((Pion) PieceBtn.pieceDepart.getPiece()).setJouer();
+                            PieceBtn.pieceDepart.setMouvement(PieceBtn.pieceArriver, imageIcon.VIDE_ICON);
+                            tourIncrementer();
+                            traitAffichage();
+                            pionToReine();
                         }
-                        PieceBtn.coupJouer();
+                        else affichageInfo.setText("Coup impossible");
                     }
+                    //remet a 0 les pièces jouers
+                    PieceBtn.coupJouer();
                 });
 
                 boardPanel.add(boardBtn[i][j]);
@@ -137,7 +121,6 @@ public class Window extends JFrame {
                 else boardBtn[i][j].setBackground(new Color(186, 164, 143));
             }
         }
-
         setPieceBtn();
         boardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         boardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -193,16 +176,13 @@ public class Window extends JFrame {
 
         affichageInfo.setFont(f);
         relancerPartie.setFont(f);
-
-        relancerPartie.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int input = JOptionPane.showConfirmDialog(window, "Etes vous sur ?");
-                if (input == 0 ) {
-                    setPieceBtn();
-                    tour = 0;
-                    traitAffichage();
-                }
+        //boutton relancer la partie
+        relancerPartie.addActionListener(e -> {
+            int input = JOptionPane.showConfirmDialog(window, "Etes vous sur ?");
+            if (input == 0 ) {
+                setPieceBtn();
+                tour = 0;
+                traitAffichage();
             }
         });
         toolBar.setMargin(new Insets(0, 0, 20, 0));
@@ -216,11 +196,10 @@ public class Window extends JFrame {
         contentPane.add(toolBar, BorderLayout.NORTH);
     }
 
-    /** définie un look and feel en fonction de l'OS  */
+    /** définie un look and feel */
     private void setUI() {
         try {
             UIManager.setLookAndFeel(new NimbusLookAndFeel());
-            //boardPanel.setUI(MetalLookAndFeel);
         } catch (UnsupportedLookAndFeelException error) {
                 JOptionPane.showMessageDialog(contentPane, "Aucun look n'est applicable", "Erreur", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -231,7 +210,8 @@ public class Window extends JFrame {
         return (ligne >= 0 && ligne < DIMENSION_BOARD) && (colonne >= 0 && colonne < DIMENSION_BOARD);
     }
 
-    public PieceBtn getPiece(short ligne, short colonne) {
+    /** renvoie la pieceBtn dans les coordonées*/
+    public PieceBtn getPieceBtn(short ligne, short colonne) {
         return boardBtn[ligne][colonne];
     }
 
@@ -256,22 +236,18 @@ public class Window extends JFrame {
         this.tour++;
     }
 
-    protected int getTour(){
-        return this.tour;
-    }
-
     /** récupere la position d'un roi d'une couleur */
     protected Coord getRoiInfo(Couleur couleur){
         //parcours le plateau pour chercher le roi de la couleur
         for (short ligne=0; ligne<DIMENSION_BOARD; ligne++ ){
             for (short  colonne=0; colonne<DIMENSION_BOARD; colonne++){
-                if (this.getPiece(ligne, colonne).getPiece() instanceof Roi &&
-                        this.getPiece(ligne, colonne).getPiece().getCouleur().equals(couleur) ) {
+                if (this.getPieceBtn(ligne, colonne).getPiece() instanceof Roi &&
+                        this.getPieceBtn(ligne, colonne).getPiece().getCouleur().equals(couleur) ) {
                     return  new Coord(ligne, colonne);
                 }
             }
         }
-        //si pas trouver pas de roi donc quitter
+        //si pas trouver de roi on quitte
         System.out.println("Erreur : il manque un roi");
         return null;
     }
@@ -283,27 +259,26 @@ public class Window extends JFrame {
             System.out.println("roi pas trouver");
             return false;
         }
-        if (estMenacer(roi)) return true;
-        return false;
+        return estMenacer(roi);
     }
 
     /**regarde si la piece est menacer par une des piece adverse */
     protected boolean estMenacer(Coord piece){
         PieceBtn pieceTempo;
-        Piece pieceMenacer = getPiece(piece.ligne, piece.colonne).getPiece();
+        Piece pieceMenacer = getPieceBtn(piece.ligne, piece.colonne).getPiece();
 
         for (short ligne=0; ligne<DIMENSION_BOARD; ligne++ ){
             for (short  colonne=0; colonne<DIMENSION_BOARD; colonne++){
-                pieceTempo = getPiece(ligne, colonne);
+                pieceTempo = getPieceBtn(ligne, colonne);
                 if ( !pieceTempo.getPiece().getPieceID().equals(PieceID.VIDE)){
                     //si la piece ne peut pas  manger  la piece menacer alors on break
+                    //test si la pieceMenacer est dans les coups possibles de piece tempo
                     if (!pieceTempo.getPiece().getCouleur().equals(pieceMenacer.getCouleur())) {
                         if ( pieceTempo.getPiece().coupPossible(this, new Move(pieceTempo.getCoord(), piece ) ) ) {
                             return true;
                         }
                     }
                 }
-                //test si la pieceMenacer est dans les coups possibles de piece tempo
             }
         }
         return false;
@@ -311,24 +286,24 @@ public class Window extends JFrame {
 
     /** fait un faux deplacement*/
     protected Piece setFakeDeplacement(Move deplacement){
-        Piece tampon = getPiece(deplacement.to.ligne, deplacement.to.colonne).getPiece();
-        getPiece(deplacement.to.ligne, deplacement.to.colonne).setPieceEgaleA(getPiece(deplacement.from.ligne, deplacement.from.colonne), imageIcon.VIDE_ICON);
+        Piece tampon = getPieceBtn(deplacement.to.ligne, deplacement.to.colonne).getPiece();
+        getPieceBtn(deplacement.to.ligne, deplacement.to.colonne).setPieceEgaleA(getPieceBtn(deplacement.from.ligne, deplacement.from.colonne), imageIcon.VIDE_ICON);
         return tampon;
     }
     /** inverse le faux deplacement*/
     protected void setFakeDeplacementReverse(Piece piece, Move deplacement){
-        getPiece(deplacement.from.ligne, deplacement.from.colonne).setPieceEgaleA(getPiece(deplacement.to.ligne, deplacement.to.colonne), imageIcon.VIDE_ICON);
-        getPiece(deplacement.to.ligne, deplacement.to.colonne).setPiece(piece);
-        getPiece(deplacement.to.ligne, deplacement.to.colonne).getPiece().setPieceID(piece.getPieceID());
+        getPieceBtn(deplacement.from.ligne, deplacement.from.colonne).setPieceEgaleA(getPieceBtn(deplacement.to.ligne, deplacement.to.colonne), imageIcon.VIDE_ICON);
+        getPieceBtn(deplacement.to.ligne, deplacement.to.colonne).setPiece(piece);
+        getPieceBtn(deplacement.to.ligne, deplacement.to.colonne).getPiece().setPieceID(piece.getPieceID());
     }
 
+    /** renvoie si le roi de la couleur avec un coup est en echec */
     private boolean isEchec(Couleur couleur, Move deplacement){
         boolean echec;
         Piece pieceRetirer = setFakeDeplacement(deplacement);
 
         //test si le roi echec
-        if (isEchecTest(couleur)) echec = true;
-        else echec = false;
+        echec = isEchecTest(couleur);
         //defait le coup
         setFakeDeplacementReverse(pieceRetirer, deplacement);
         return echec;
@@ -337,11 +312,11 @@ public class Window extends JFrame {
     /** converti les pions en reine*/
     private void pionToReine(){
         for (short j = 0; j<DIMENSION_BOARD; j++){
-            if (getPiece((short) 0,j).getPiece().getPieceID() == PieceID.PION_BLANC){
-                getPiece((short) 0, j).setPieceBtn(PieceID.REINE_BLANC, imageIcon.REINE_BLANC_ICON);
+            if (getPieceBtn((short) 0,j).getPiece().getPieceID() == PieceID.PION_BLANC){
+                getPieceBtn((short) 0, j).setPieceBtn(PieceID.REINE_BLANC, imageIcon.REINE_BLANC_ICON);
             }
-            if (getPiece((short) 7,j).getPiece().getPieceID() == PieceID.PION_NOIR){
-                getPiece((short) 7, j).setPieceBtn(PieceID.REINE_NOIR, imageIcon.REINE_NOIR_ICON);
+            if (getPieceBtn((short) 7,j).getPiece().getPieceID() == PieceID.PION_NOIR){
+                getPieceBtn((short) 7, j).setPieceBtn(PieceID.REINE_NOIR, imageIcon.REINE_NOIR_ICON);
             }
         }
     }

@@ -6,6 +6,7 @@ import Interface.Window;
 import Move.Move;
 import Move.Coord;
 
+/** pièce le cavalier*/
 public class Cavalier extends Piece{
 
     public static final short[][] VECTEUR_CAVALIER = { {2, 1}, {2, -1}, {-2, 1}, {-2, -1},
@@ -17,6 +18,7 @@ public class Cavalier extends Piece{
         else super.pieceID = PieceID.CAVALIER_BLANC;
     }
 
+    /** fait les coups possibles du cavalier*/
     @Override
     public boolean coupPossible(Window plateau, Move move){
         short ligne, colonne;
@@ -29,7 +31,7 @@ public class Cavalier extends Piece{
             //cordonnés du coup arriver
             if ( Window.isDansPlateau(ligne, colonne) ){
                 //test si la piece d'arriver est accessible pour la piece de départ 
-                if ( plateau.getPiece( to.ligne, to.colonne ).isPlaceAcessible( plateau.getPiece(ligne, colonne) ) ) {
+                if ( plateau.getPieceBtn( to.ligne, to.colonne ).isPlaceAcessible( plateau.getPieceBtn(ligne, colonne) ) ) {
                     if (from.ligne == ligne && from.colonne == colonne) return true;
                 }
             }

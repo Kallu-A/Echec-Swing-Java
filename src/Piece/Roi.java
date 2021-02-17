@@ -5,7 +5,7 @@ import Interface.Window;
 
 import Move.Move;
 import Move.Coord;
-
+/** piece du roi*/
 public class Roi extends Piece {
    
     private boolean jamaisJouer = true;
@@ -18,14 +18,7 @@ public class Roi extends Piece {
         else super.pieceID = PieceID.ROI_BLANC;
     }
 
-    public boolean getJamaisJouer(){
-        return this.jamaisJouer;
-    }
-
-    public void setRoqueJouer(){
-        this.jamaisJouer = false;
-    }
-
+    /** calcul les coups possibles du Roi*/
     @Override
     public boolean coupPossible(Window plateau, Move move){
         short ligne, colonne;
@@ -38,7 +31,7 @@ public class Roi extends Piece {
             colonne = (short) (to.colonne + vecteur[1]);
             if (Window.isDansPlateau(ligne, colonne) ){
                 //si est dans le plateau et pas de la même couleur alors le coup est possible
-                if (plateau.getPiece(to.ligne, to.colonne).isPlaceAcessible(plateau.getPiece(ligne, colonne))){
+                if (plateau.getPieceBtn(to.ligne, to.colonne).isPlaceAcessible(plateau.getPieceBtn(ligne, colonne))){
                     if (from.ligne == ligne && from.colonne == colonne) {
                         jamaisJouer = false;
                         return true;
