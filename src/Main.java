@@ -1,8 +1,8 @@
-import Interface.Window;
+import Interface.JeuEchec;
 
 public class Main {
 
     public static void main(String[] args) {
-        Window window = new Window();
+        JeuEchec window = new JeuEchec();
     }
 }

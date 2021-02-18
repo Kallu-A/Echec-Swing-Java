@@ -18,6 +18,14 @@ public class Roi extends Piece {
         else super.pieceID = PieceID.ROI_BLANC;
     }
 
+    public boolean isJamaisJouer() {
+        return jamaisJouer;
+    }
+
+    public void setJamaisJouer(boolean jamaisJouer) {
+        this.jamaisJouer = jamaisJouer;
+    }
+
     /** calcul les coups possibles du Roi*/
     @Override
     public boolean coupPossible(Window plateau, Move move){
