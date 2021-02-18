@@ -37,7 +37,7 @@ public class JeuEchec extends Window{
             //test pas de la même couleur
             if ( PieceBtn.pieceDepart.getPiece().getCouleur() == pieceBtn.getPiece().getCouleur()) {
                 //on test que les cases sélectionnées sont bien Roi et tour qui sont les conditions du roque
-                if (!(PieceBtn.pieceDepart.getPiece() instanceof Roi || pieceBtn.getPiece() instanceof Tour) ) {
+                if (!(PieceBtn.pieceDepart.getPiece() instanceof Roi && pieceBtn.getPiece() instanceof Tour) ) {
                     PieceBtn.pieceDepart = pieceBtn;
                     return;
                 }

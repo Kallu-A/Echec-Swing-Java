@@ -2,13 +2,9 @@ package Interface;
 
 import Interface.Image.PieceID;
 import Interface.Image.PieceImageIcon;
-import Move.Move;
 import Move.Coord;
 import Piece.Couleur;
-import Piece.Piece;
-import Piece.Pion;
-import Piece.Roi;
-import Piece.Tour;
+
 import javax.swing.*;
 
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
@@ -63,7 +59,7 @@ public class Window extends JFrame {
                 boardBtn[i][j] = new PieceBtn(new Coord( (short) i, (short) j));
 
                 //action en cas de clique
-                boardBtn[i][j].addActionListener(e -> boutonAction(e));
+                boardBtn[i][j].addActionListener(this::boutonAction);
 
                 boardPanel.add(boardBtn[i][j]);
                 if ( (i+j) %2 == 1) boardBtn[i][j].setBackground(new Color(102, 110,105 ));
@@ -188,16 +184,6 @@ public class Window extends JFrame {
         this.tour++;
     }
 
-    /** converti les pions en reine*/
-    private void pionToReine(){
-        for (short j = 0; j<DIMENSION_BOARD; j++){
-            if (getPieceBtn((short) 0,j).getPiece().getPieceID() == PieceID.PION_BLANC){
-                getPieceBtn((short) 0, j).setPieceBtn(PieceID.REINE_BLANC, imageIcon.REINE_BLANC_ICON);
-            }
-            if (getPieceBtn((short) 7,j).getPiece().getPieceID() == PieceID.PION_NOIR){
-                getPieceBtn((short) 7, j).setPieceBtn(PieceID.REINE_NOIR, imageIcon.REINE_NOIR_ICON);
-            }
-        }
-    }
+
 
 }
