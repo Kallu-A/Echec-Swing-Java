@@ -8,7 +8,8 @@ import Piece.Couleur;
 import javax.swing.*;
 
 
-/** bouton qui contien une pièce*/
+/** bouton qui contien une pièce
+ * @author kallu */
 public class PieceBtn extends JButton {
 
     public static EtatCoup etat = EtatCoup.PIECEDEPART;

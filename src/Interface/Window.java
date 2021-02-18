@@ -12,7 +12,8 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import java.awt.*;
 
-/** interface graphique et jeu d'échec*/
+/** interface graphique et jeu d'échec
+ * @author kallu */
 public class Window extends JFrame {
 
     public static int DIMENSION_BOARD = 8;
@@ -126,7 +127,7 @@ public class Window extends JFrame {
         relancerPartie.setFont(f);
         //boutton relancer la partie
         relancerPartie.addActionListener(e -> {
-            int input = JOptionPane.showConfirmDialog(window, "Etes vous sur ?");
+            int input = JOptionPane.showConfirmDialog(window, "Êtes-vous sur ?");
             if (input == 0 ) {
                 setPieceBtn();
                 tour = 0;

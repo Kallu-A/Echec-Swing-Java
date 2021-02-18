@@ -1,6 +1,7 @@
 package Interface.Image;
 
-/** permet d'identifier les pieces dans les piecesBtn*/
+/** permet d'identifier les pieces dans les piecesBtn
+ * @author kallu */
 public enum PieceID {
 
     VIDE,

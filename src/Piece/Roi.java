@@ -5,7 +5,8 @@ import Interface.Window;
 
 import Move.Move;
 import Move.Coord;
-/** piece du roi*/
+/** piece du roi
+ * @author kallu */
 public class Roi extends Piece {
    
     private boolean jamaisJouer = true;

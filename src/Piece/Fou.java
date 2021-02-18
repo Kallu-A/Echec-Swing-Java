@@ -5,7 +5,8 @@ import Interface.Image.PieceID;
 import Interface.Window;
 import Move.Move;
 import Move.Coord;
-/** pièce le fou*/
+/** pièce le fou
+ * @author kallu */
 public class Fou extends Piece {
 
     public static final short[][] VECTEUR_FOU = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };

@@ -3,7 +3,8 @@ package Move;
 import Interface.PieceBtn;
 import Piece.Piece;
 
-/** un deplacement constitué de deux coordonnee  */
+/** un deplacement constitué de deux coordonnee
+ * @author kallu */
 public class Move {
 
     public static final Move GRAND_ROQUE_BLANC = new Move( new Coord((short) 7,(short) 4), new Coord((short) 7, (short) 0) );

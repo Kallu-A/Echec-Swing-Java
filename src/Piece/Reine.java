@@ -6,7 +6,8 @@ import Interface.Window;
 
 import Move.Move;
 import Move.Coord;
-/** piece de la reine*/
+/** piece de la reine
+ * @author kallu */
 public class Reine extends Piece {
        
     public Reine(Couleur couleur){

@@ -7,7 +7,8 @@ import Interface.Window;
 import Move.Move;
 import Move.Coord;
 
-/** pièce le pion*/
+/** pièce le pion
+ * @author kallu */
 public class Pion extends Piece {
 
     //utile pour le déplacement de 2

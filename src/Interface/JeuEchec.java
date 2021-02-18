@@ -5,7 +5,8 @@ import Move.Move;
 import Move.Coord;
 import Piece.*;
 
-/** extends Windows contient les fonctions Roque Echec*/
+/** extends Windows contient les fonctions Roque Echec
+ * @author kallu */
 public class JeuEchec extends Window{
 
     public JeuEchec() {
@@ -28,7 +29,7 @@ public class JeuEchec extends Window{
             if ( pieceBtn.getPiece().isUnePiece() )
                 PieceBtn.pieceDepart = pieceBtn;
             else {
-                affichageInfo.setText("Vous devez selectioner une pièce");
+                affichageInfo.setText("Vous devez sélectionner une pièce");
                 return;
             }
         }
@@ -121,7 +122,7 @@ public class JeuEchec extends Window{
 
         Roi roi = (Roi) getPieceBtn(deplacementRoque.to.ligne, deplacementRoque.to.colonne).getPiece();
         if (!roi.isJamaisJouer()) {
-            affichageInfo.setText("Le roi a déjà été joué");
+            affichageInfo.setText("Le roi a déjà été jouer");
             return false;
         }
         // -1 pas un roque 0 petit roque 1 grand roque
@@ -173,7 +174,6 @@ public class JeuEchec extends Window{
     private boolean isEchecTest(Couleur couleur){
         Coord roi = getRoiInfo(couleur);
         if (roi == null) {
-            System.out.println("roi pas trouver");
             return false;
         }
         return isMenacer(roi, Couleur.VIDE);

@@ -1,6 +1,7 @@
 package Piece;
 
-/** couleur du materiel*/
+/** couleur du materiel
+ * @author kallu */
 public enum Couleur {
     BLANC,
     VIDE,

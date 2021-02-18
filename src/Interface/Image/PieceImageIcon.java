@@ -2,7 +2,8 @@ package Interface.Image;
 
 import javax.swing.*;
 
-/** récupère toute les images */
+/** récupère toute les images
+ * @author kallu */
 public  class PieceImageIcon {
 
     public Icon VIDE_ICON = new javax.swing.ImageIcon(this.getClass().getResource("vide.png"));

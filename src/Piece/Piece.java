@@ -4,7 +4,8 @@ import Interface.Image.PieceID;
 import Interface.Window;
 import Move.Move;
 
-/** pièce*/
+/** pièce
+ * @author kallu */
 public class Piece {
 
     private final boolean unePiece;

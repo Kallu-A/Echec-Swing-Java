@@ -2,7 +2,8 @@ package Move;
 
 import Interface.Window;
 
-/** coordonée composé de deux valeur */
+/** coordonée composé de deux valeur
+ * @author kallu */
 public class Coord {
 
     public short ligne ,colonne ;

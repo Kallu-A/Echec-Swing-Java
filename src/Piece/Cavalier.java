@@ -6,7 +6,8 @@ import Interface.Window;
 import Move.Move;
 import Move.Coord;
 
-/** pièce le cavalier*/
+/** pièce le cavalier
+ * @author kallu */
 public class Cavalier extends Piece{
 
     public static final short[][] VECTEUR_CAVALIER = { {2, 1}, {2, -1}, {-2, 1}, {-2, -1},

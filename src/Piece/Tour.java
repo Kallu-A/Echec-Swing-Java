@@ -6,7 +6,8 @@ import Interface.Window;
 
 import Move.Move;
 import Move.Coord;
-/** piece de la tour*/
+/** piece de la tour
+ * @author kallu */
 public class Tour extends Piece {
 
     public static final short[][] VECTEUR_TOUR = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };

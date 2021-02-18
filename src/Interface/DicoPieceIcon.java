@@ -7,7 +7,8 @@ import Piece.*;
 
 import javax.swing.*;
 
-/** s'occupe de la transformation ID Icon*/
+/** s'occupe de la transformation ID Icon
+ * @author kallu*/
 public  class DicoPieceIcon {
 
     private static  final PieceImageIcon image = new PieceImageIcon();
